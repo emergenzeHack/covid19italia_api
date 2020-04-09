@@ -10,6 +10,6 @@ https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issues
 
 Example
 https://host/reports/Provincia
-gives all the "Provincia" values of all reports (where exist) in JSON form.
+gives all the "Provincia" values of all reports (where exist).
 
 To start python3 app.py
