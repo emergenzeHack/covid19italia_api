@@ -30,7 +30,7 @@ def reports(data_field):
 # A welcome message to test our server
 @app.route('/')
 def index():
-    return "<h1>Welcome to our server !!</h1>"
+    return "<h1>Welcome to the Covid19Italia.Help API !</h1>"
 
 # Get setup so that if we call the app directly (and it isn't being imported elsewhere)
 # it will then run the app with the debug mode as True
