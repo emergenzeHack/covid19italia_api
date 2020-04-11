@@ -10,4 +10,4 @@ Al momento sono attive qui https://covid19italiahelp.herokuapp.com/
 dove "data_field" è uno dei campi che si possono trovare in ogni report [in questo datateset](https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issuesjson.json) e mostra i report che hanno "data_field" specificato e la descrizione del relativo report.
 Ad esempio: [https://covid19italiahelp.herokuapp.com/reports/Provincia](https://covid19italiahelp.herokuapp.com/reports/Provincia) restituisce tutti i valori del campo Provincia (dove esiste) con la descrizione della relativa segnalazione
 
-### To start locally python3 app.py
+### Per avviare in locale: python3 app.py
