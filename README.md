@@ -1,9 +1,11 @@
 # covid19italia_api
 The api of covid19italia dataset
 
-At the moment actived here https://covid19italiahelp.herokuapp.com/
+At the moment active here https://covid19italiahelp.herokuapp.com/
+To use that  
 
-where data_field is one field name of the data list present in the issue dataset here
+## GET
+reports/data_field where data_field is one field name of the data list present in the issue dataset here
 https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issuesjson.json
 
 Example
