@@ -13,30 +13,27 @@ app = Flask(__name__)
 # return JSON with data with all value of "data_field" (example "Titolo") where data_field exist
 @app.route('/reports/<data_field>', methods=['GET'])
 def reports(data_field):
-    i=0
     data = urllib.request.urlopen("https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issuesjson.json").read()
     file_data = json.loads(data)
     print("Started reading JSON data...")
     # We can then find the data for the requested and send it back as json
-    newlist = []
-    newlist1 = []
+    i=0
+    newlist=[]
     while i < len(file_data):
-        if data_field in file_data[i]['issue']['data'] and "Descrizione" in file_data[i]['issue']['data']:
-            newlist.append(file_data[i]['issue']['data']["Descrizione"]) 
-            newlist1.append(file_data[i]['issue']['data'][data_field])
+        if data_field in file_data[i]['issue']['data']:
+            newlist.append(file_data[i]['issue']['data'])
         i += 1
-    data_set = [{'Description': country, str(data_field): wins} for country, wins in zip(newlist, newlist1)]
-    return json.dumps(data_set)
-    
+    return json.dumps(newlist)
+
 #get all reports
 @app.route('/reports/', methods=['GET'])
 def reports_all():
-    i=0
     data = urllib.request.urlopen("https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issuesjson.json").read()
     file_data = json.loads(data)
     print("Started reading JSON data...")
     # We can then find the data for the requested and send it back as json
-    newlist = []
+    i=0
+    newlist=[]
     while i < len(file_data):
         newlist.append(file_data[i]['issue']['data'])
         i += 1
