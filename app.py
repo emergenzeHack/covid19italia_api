@@ -61,7 +61,7 @@ def reports_all():
 # A welcome message to test our server
 @app.route('/')
 def index():
-    return "<h1>Welcome to the Covid19Italia.Help API ! </h1>"
+    return "<h1>Welcome to the Covid19Italia.Help API ! </h1> You can use the API to request specific data, consider that all data of the project are available <a href='https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issuesjson.json'>here</a>"
 
 #error handler
 @app.errorhandler(404) 
