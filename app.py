@@ -1,4 +1,5 @@
 import urllib.request
+import datetime
 import json
 
 # import Flask
@@ -8,22 +9,36 @@ from flask import Flask
 # to run python3 app.py
 app = Flask(__name__)
 
+# poor man's cache, assumes concurrency using processes and not threads
+CACHE_TIMEOUT = datetime.timedelta(hours=1)
+CACHE = {}
+
+
+def get_data_from_github(filename):
+    now = datetime.datetime.now(tz=datetime.timezone.utc)
+    hit = CACHE.get(filename)
+    if hit:
+        t, data = hit
+        if t + CACHE_TIMEOUT > now:
+            return json.loads(data)
+
+    data = urllib.request.urlopen(filename).read()
+    CACHE[filename] = (now, data)
+    return json.loads(data)
+
+
 # establish a Flask route so that we can serve HTTP traffic on that route
 # GET api is endpoint/reports/tag_of_data_array
 # return JSON with data with all value of "data_field" (example "Provincia") where data_field exist
 @app.route('/reports/<data_field>', methods=['GET'])
 def reports_key(data_field):
-    data = urllib.request.urlopen("https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issuesjson.json").read()
-    file_data = json.loads(data)
+    data = get_data_from_github(
+        "https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issuesjson.json"
+    )
     print("Started reading JSON data...")
     # We can then find the data for the requested and send it back as json
-    i=0
-    newlist=[]
-    while i < len(file_data):
-        if data_field in file_data[i]['issue']['data']:
-            newlist.append(file_data[i]['issue']['data'])
-        i += 1
-    return json.dumps(newlist)
+    filtered = [d['issue']['data'] for d in data if data_field in d['issue']['data']]
+    return json.dumps(filtered)
 
 # establish a Flask route so that we can serve HTTP traffic on that route
 # GET api is endpoint/reports/data_field/data_value
@@ -31,32 +46,25 @@ def reports_key(data_field):
 # and take all reports with data_field=data_value
 @app.route('/reports/<data_field>/<data_value>', methods=['GET'])
 def reports_key_value(data_field,data_value):
-    data = urllib.request.urlopen("https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issuesjson.json").read()
-    file_data = json.loads(data)
+    data = get_data_from_github(
+        "https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issuesjson.json"
+    )
     print("Started reading JSON data...")
     # We can then find the data for the requested and send it back as json
-    i=0
-    newlist=[]
-    while i < len(file_data):
-        if data_field in file_data[i]['issue']['data']:
-            if file_data[i]['issue']['data'][data_field]== data_value:
-                newlist.append(file_data[i]['issue']['data'])
-        i += 1
-    return json.dumps(newlist)
+    filtered_by_field = (d['issue']['data'] for d in data if data_field in d['issue']['data'])
+    filtered_by_value = [d for d in filtered_by_field if data_value in d[data_field]]
+    return json.dumps(filtered_by_value)
 
 #GET ALL reports
 @app.route('/reports/', methods=['GET'])
 def reports_all():
-    data = urllib.request.urlopen("https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issuesjson.json").read()
-    file_data = json.loads(data)
+    data = get_data_from_github(
+        "https://raw.githubusercontent.com/emergenzeHack/covid19italia_data/master/issuesjson.json"
+    )
     print("Started reading JSON data...")
     # We can then find the data for the requested and send it back as json
-    i=0
-    newlist=[]
-    while i < len(file_data):
-        newlist.append(file_data[i]['issue']['data'])
-        i += 1
-    return json.dumps(newlist)
+    reports = [d['issue']['data'] for d in data]
+    return json.dumps(reports)
 
 # A welcome message to test our server
 @app.route('/')
