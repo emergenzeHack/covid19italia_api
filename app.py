@@ -17,13 +17,8 @@ def reports_key(data_field):
     file_data = json.loads(data)
     print("Started reading JSON data...")
     # We can then find the data for the requested and send it back as json
-    i=0
-    newlist=[]
-    while i < len(file_data):
-        if data_field in file_data[i]['issue']['data']:
-            newlist.append(file_data[i]['issue']['data'])
-        i += 1
-    return json.dumps(newlist)
+    filtered = [d['issue']['data'] for d in file_data if data_field in d['issue']['data']]
+    return json.dumps(filtered)
 
 # establish a Flask route so that we can serve HTTP traffic on that route
 # GET api is endpoint/reports/data_field/data_value
@@ -35,14 +30,9 @@ def reports_key_value(data_field,data_value):
     file_data = json.loads(data)
     print("Started reading JSON data...")
     # We can then find the data for the requested and send it back as json
-    i=0
-    newlist=[]
-    while i < len(file_data):
-        if data_field in file_data[i]['issue']['data']:
-            if file_data[i]['issue']['data'][data_field]== data_value:
-                newlist.append(file_data[i]['issue']['data'])
-        i += 1
-    return json.dumps(newlist)
+    filtered_by_field = (d['issue']['data'] for d in file_data if data_field in d['issue']['data'])
+    filtered_by_value = [d for d in filtered_by_field if data_value in d[data_field]]
+    return json.dumps(filtered_by_value)
 
 #GET ALL reports
 @app.route('/reports/', methods=['GET'])
@@ -51,12 +41,8 @@ def reports_all():
     file_data = json.loads(data)
     print("Started reading JSON data...")
     # We can then find the data for the requested and send it back as json
-    i=0
-    newlist=[]
-    while i < len(file_data):
-        newlist.append(file_data[i]['issue']['data'])
-        i += 1
-    return json.dumps(newlist)
+    reports = [d['issue']['data'] for d in file_data]
+    return json.dumps(reports)
 
 # A welcome message to test our server
 @app.route('/')
